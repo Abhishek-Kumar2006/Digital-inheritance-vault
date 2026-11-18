@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Digital Inheritance Vault</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23f3ece0'/%3E%3Cpath d='M16 6l8 3v6c0 5-3.4 8.6-8 11-4.6-2.4-8-6-8-11V9z' fill='%23f2b84b'/%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:light;
+  --ink:#2b2418; --ink2:#7a6f5c; --paper:#fbf8f2; --card:#ffffff; --line:#ebe5d8;
+  --teal:#f2b84b; --teal2:#e6a72f; --amber:#f2b84b; --amber-d:#9a6508; --red:#b3372d; --green:#2f7d4f;
+  --shadow:0 1px 2px rgba(60,48,28,.06),0 8px 24px rgba(60,48,28,.07);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.5 Inter,system-ui,sans-serif}
+h1,h2,h3{font-family:Fraunces,Georgia,serif;margin:0;letter-spacing:-.01em}
+button{font:inherit;cursor:pointer}
+.hide{display:none!important}
+.btn{background:var(--teal);color:#2a1d00;border:0;border-radius:10px;padding:10px 18px;font-weight:600}
+.btn:hover{background:var(--teal2)}
+.btn.amber{background:var(--amber);color:#2a1d00}
+.btn.ghost{background:#fff;color:var(--ink);border:1px solid #ddd3bd}.btn.ghost:hover{background:#f6f1e6}
+.btn.danger{background:transparent;color:var(--red);border:1px solid var(--red)}
+.btn:disabled{opacity:.55;cursor:wait}
+label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:14px 0 5px}
+input,select,textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);font:inherit}
+input:focus,select:focus,textarea:focus,button:focus-visible{outline:2px solid var(--amber);outline-offset:1px}
+textarea{min-height:80px;resize:vertical}
+.err{color:var(--red);font-size:13px;min-height:18px;margin-top:10px}
+
+/* auth */
+#auth{min-height:100vh;display:grid;grid-template-columns:1.1fr 1fr}
+.hero{background:#f3ece0;color:var(--ink);border-right:1px solid var(--line);padding:56px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+.hero:after{content:"";position:absolute;right:-120px;bottom:-120px;width:420px;height:420px;border-radius:50%;border:60px solid rgba(242,184,75,.22)}
+.brand{display:flex;gap:10px;align-items:center;font-family:Fraunces,serif;font-weight:700;font-size:20px;letter-spacing:.02em}
+.hero h1{font-size:44px;line-height:1.1;margin:0 0 16px;max-width:460px}
+.hero p{color:var(--ink2);max-width:420px}
+.pts{list-style:none;padding:0;margin:28px 0 0;display:grid;gap:12px;position:relative;z-index:1}
+.pts li{display:flex;gap:12px;align-items:flex-start;color:var(--ink)}
+.pts b{color:var(--amber-d)}
+.formwrap{display:flex;align-items:center;justify-content:center;padding:32px}
+.box{width:100%;max-width:400px}
+.box h2{font-size:28px;margin-bottom:4px}
+.box .sub{color:var(--ink2);margin-bottom:8px}
+.tabs{display:flex;gap:6px;background:var(--line);padding:4px;border-radius:12px;margin:18px 0 6px}
+.tabs button{flex:1;border:0;background:transparent;padding:8px;border-radius:9px;font-weight:600;color:var(--ink2)}
+.tabs button.on{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.pwrow{position:relative}.pwrow button{position:absolute;right:6px;top:5px;border:0;background:none;color:var(--ink2);padding:6px 8px;font-size:13px}
+.meter{height:5px;border-radius:3px;background:var(--line);margin-top:8px;overflow:hidden}.meter i{display:block;height:100%;width:0;transition:.2s}
+.warn{background:#fff3d6;color:#5b4208;border-radius:10px;padding:10px 12px;font-size:13px;margin-top:14px}
+
+/* app */
+#app{display:grid;grid-template-columns:250px 1fr;min-height:100vh}
+aside{background:#fff;color:var(--ink);border-right:1px solid var(--line);padding:22px 14px;display:flex;flex-direction:column;gap:4px;position:sticky;top:0;height:100vh}
+aside .brand{padding:0 8px 18px;color:var(--ink)}
+.nav{display:flex;justify-content:space-between;align-items:center;width:100%;text-align:left;background:none;border:0;color:var(--ink2);padding:9px 12px;border-radius:9px}
+.nav:hover{background:#f6f1e6}
+.nav.on{background:#fbecc8;color:var(--ink);font-weight:600}
+.nav span.n{font-size:12px;background:#f1ebde;color:var(--ink2);border-radius:20px;padding:1px 8px}
+.sp{flex:1}
+.who{border-top:1px solid var(--line);padding:14px 8px 0;font-size:13px}
+.who b{display:block;color:var(--ink)}
+main{padding:32px 40px;max-width:1100px;width:100%}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:20px}
+.top h2{font-size:30px}
+.sec{display:inline-flex;gap:8px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:30px;padding:5px 12px;font-size:12.5px;color:var(--green);font-weight:600;margin-top:8px}
+.sec:before{content:"";width:8px;height:8px;border-radius:50%;background:var(--green)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:var(--shadow);cursor:pointer;text-align:left;color:inherit;transition:transform .12s}
+.card:hover{transform:translateY(-2px)}
+.card .cat{font-size:11.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--amber-d)}
+.card h3{font-size:19px;margin:4px 0 8px}
+.card .meta{font-size:13px;color:var(--ink2)}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.chip{font-size:12px;border:1px solid var(--line);border-radius:20px;padding:2px 9px;color:var(--ink2)}
+.empty{border:2px dashed var(--line);border-radius:16px;padding:48px 24px;text-align:center;color:var(--ink2)}
+.empty h3{color:var(--ink);margin-bottom:6px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:22px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.stat b{font:700 28px Fraunces,serif;display:block}
+.stat span{font-size:13px;color:var(--ink2)}
+table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+td,th{padding:10px 14px;text-align:left;border-bottom:1px solid var(--line);font-size:14px}th{color:var(--ink2);font-size:12px;text-transform:uppercase;letter-spacing:.06em}
+
+/* modal */
+.modal{position:fixed;inset:0;background:rgba(60,48,28,.35);display:flex;align-items:flex-start;justify-content:center;padding:4vh 16px;overflow:auto;z-index:20}
+.sheet{background:#fff;border-radius:18px;width:100%;max-width:620px;padding:26px;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.sheet h2{font-size:24px;margin-bottom:2px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+.drop{border:2px dashed #d9cfb8;border-radius:14px;padding:18px;text-align:center;color:var(--ink2);cursor:pointer;background:#fdfbf6}
+.drop.over{border-color:var(--amber);background:rgba(242,184,75,.1)}
+.files{display:grid;gap:8px;margin-top:10px}
+.file{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-size:14px}
+.file .nm{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.file small{color:var(--ink2)}
+.file button{border:0;background:none;color:var(--amber-d);font-weight:600;padding:2px 6px}
+.file button.x{color:var(--red)}
+.kv{display:grid;grid-template-columns:140px 1fr;gap:8px 14px;margin:16px 0;font-size:14.5px}
+.kv dt{color:var(--ink2)}.kv dd{margin:0;word-break:break-word;white-space:pre-wrap}
+.cipher{font:12px ui-monospace,Menlo,monospace;background:#f6f1e6;border:1px solid var(--line);color:#1d5c3f;border-radius:10px;padding:12px;word-break:break-all;max-height:130px;overflow:auto;margin-top:8px}
+.row{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;flex-wrap:wrap}
+.preview{width:100%;height:60vh;border:1px solid var(--line);border-radius:10px;margin-top:12px;background:#fff}
+.preview-img{max-width:100%;max-height:60vh;display:block;margin:12px auto;border-radius:8px}
+#toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#fff;color:var(--ink);border:1px solid var(--line);box-shadow:0 8px 24px rgba(60,48,28,.18);padding:10px 18px;border-radius:30px;font-size:14px;z-index:50}
+@media(max-width:800px){
+  #auth{grid-template-columns:1fr}.hero{padding:28px}.hero h1{font-size:30px}.pts{display:none}
+  #app{grid-template-columns:1fr}
+  aside{position:static;height:auto;flex-direction:row;flex-wrap:wrap;padding:12px}aside .brand{width:100%;padding-bottom:6px}
+  .nav{width:auto;gap:8px}.sp,.who{display:none}.who.mobile{display:block}
+  main{padding:20px 16px}.two{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr 1fr}.kv{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ AUTH ============ -->
+<div id="auth">
+  <section class="hero">
+    <div class="brand"><svg width="30" height="30" viewBox="0 0 32 32"><path d="M16 3l11 4v8c0 7-4.6 11.8-11 14.5C9.6 26.800 5 22 5 15V7z" fill="#f2b84b"/><rect x="12" y="13" width="8" height="7" rx="1.500" fill="#2b2418"/><path d="M13.500 13v-2a2.500 2.500 0 015 0v2" fill="none" stroke="#2b2418" stroke-width="1.800"/></svg>Digital Inheritance Vault</div>
+    <div style="position:relative;z-index:1">
+      <h1>Find it. Protect it. Pass it on.</h1>
+      <p>One private place for your accounts, policies and key papers, locked so tightly that even this server cannot read them.</p>
+      <ul class="pts">
+        <li><b>01</b> Everything is encrypted with AES-256 inside your browser before it is uploaded.</li>
+        <li><b>02</b> Your password never leaves your device. We store only locked data.</li>
+        <li><b>03</b> Every visit is written to an activity log you can read.</li>
+      </ul>
+    </div>
+    <small style="color:var(--ink2)">Team INNOVATX · SGU HACKX 1.0 · Prototype</small>
+  </section>
+  <section class="formwrap">
+    <form class="box" id="authForm" autocomplete="on">
+      <h2 id="authTitle">Welcome back</h2>
+      <div class="sub" id="authSub">Sign in to open your vault.</div>
+      <div class="tabs" role="tablist">
+        <button type="button" id="tabIn" class="on">Sign in</button>
+        <button type="button" id="tabUp">Create vault</button>
+      </div>
+      <div id="nameRow" class="hide"><label for="name">Full name</label><input id="name" autocomplete="name"></div>
+      <label for="email">Email</label><input id="email" type="email" required autocomplete="username">
+      <label for="pw">Password</label>
+      <div class="pwrow"><input id="pw" type="password" required autocomplete="current-password"><button type="button" id="showpw">Show</button></div>
+      <div id="upExtra" class="hide">
+        <div class="meter"><i id="meterbar"></i></div><small id="meterTxt" style="color:var(--ink2)">Use 12+ characters. A short sentence works well.</small>
+        <label for="pw2">Confirm password</label><input id="pw2" type="password" autocomplete="new-password">
+        <div class="warn"><b>No password reset.</b> Your password is the only key to your vault. If you forget it, nobody, including us, can recover your data.</div>
+      </div>
+      <div class="err" id="authErr" role="alert"></div>
+      <button class="btn amber" id="authBtn" style="width:100%;margin-top:8px;padding:12px">Sign in</button>
+    </form>
+  </section>
+</div>
+
+<!-- ============ APP ============ -->
+<div id="app" class="hide">
+  <aside>
+    <div class="brand"><svg width="26" height="26" viewBox="0 0 32 32"><path d="M16 3l11 4v8c0 7-4.6 11.8-11 14.5C9.6 26.800 5 22 5 15V7z" fill="#f2b84b"/></svg>Inheritance Vault</div>
+    <div id="nav"></div>
+    <div class="sp"></div>
+    <div class="who"><b id="whoName"></b><span id="whoMail" style="color:var(--ink2)"></span><br><button class="btn ghost" id="logout" style="margin-top:10px;padding:6px 12px;font-size:13px">Lock &amp; sign out</button></div>
+  </aside>
+  <main>
+    <div class="top">
+      <div><h2 id="viewTitle">Overview</h2><span class="sec">AES-256-GCM · encrypted in your browser</span></div>
+      <button class="btn" id="addBtn">+ Add record</button>
+    </div>
+    <div id="view"></div>
+  </main>
+</div>
+
+<div id="modalHost"></div>
+<div id="toast" class="hide"></div>
+
+<script>
+"use strict";
+/* ============================================================
+   CATEGORIES: each "field" of life has its own basic details
+   ============================================================ */
+const CATS = {
+  bank:{label:"Bank accounts",icon:"🏦",fields:[
+    ["Bank name","text"],["Account type","select",["Savings","Current","Salary","Fixed deposit","Recurring deposit","Locker"]],
+    ["Account number","text"],["IFSC / branch","text"],["Nominee","text"],["Joint holder","text"]]},
+  insurance:{label:"Insurance",icon:"🛡️",fields:[
+    ["Insurer","text"],["Policy type","select",["Life","Health","Motor","Home","Term","Other"]],
+    ["Policy number","text"],["Sum assured","text"],["Premium due date","date"],["Nominee","text"],["Agent / contact","text"]]},
+  invest:{label:"Investments",icon:"📈",fields:[
+    ["Institution / platform","text"],["Type","select",["Mutual fund","Stocks / Demat","PPF","EPF / NPS","Bonds","Crypto","Other"]],
+    ["Folio / Demat / account no.","text"],["Approx. value","text"],["Nominee","text"]]},
+  online:{label:"Online accounts",icon:"🌐",fields:[
+    ["Service","text"],["Username / email used","text"],["Account type","select",["Email","Social media","Cloud storage","Subscription","Shopping","Other"]],
+    ["Auto-pay / renewal?","select",["No","Yes - monthly","Yes - yearly"]],["Where the recovery info is kept","text"]]},
+  property:{label:"Property & assets",icon:"🏠",fields:[
+    ["Asset type","select",["House / flat","Land","Vehicle","Jewellery","Other"]],["Location / description","text"],
+    ["Registration / reference no.","text"],["Co-owner","text"],["Approx. value","text"]]},
+  legal:{label:"Legal papers",icon:"📜",fields:[
+    ["Document type","select",["Will","Power of attorney","Nominee declaration","Trust deed","ID proof","Other"]],
+    ["Where the original is kept","text"],["Executor / lawyer","text"],["Date signed","date"]]},
+  memories:{label:"Memories",icon:"📷",fields:[
+    ["What it is","text"],["Where it is stored","text"],["Who should receive it","text"]]},
+  other:{label:"Other",icon:"📁",fields:[["Detail","text"]]}
+};
+const COMMON = [["Trusted contact who may claim this","text"]];
+
+/* ============================================================
+   CRYPTO  (Web Crypto API; nothing here is sent to the server in clear)
+   ============================================================ */
+const enc = new TextEncoder(), dec = new TextDecoder();
+const b64 = u8 => { let s="";u8=new Uint8Array(u8);for(let i=0;i<u8.length;i+=0x8000)s+=String.fromCharCode.apply(null,u8.subarray(i,i+0x8000));return btoa(s)};
+const unb64 = s => Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+
+async function deriveKeys(password, saltB64, iters){
+  const base = await crypto.subtle.importKey("raw", enc.encode(password), "PBKDF2", false, ["deriveBits"]);
+  const bits = new Uint8Array(await crypto.subtle.deriveBits({name:"PBKDF2",hash:"SHA-256",salt:unb64(saltB64),iterations:iters}, base, 512));
+  // first half proves identity to the server; second half never leaves this device
+  const kek = await crypto.subtle.importKey("raw", bits.slice(32), "AES-GCM", false, ["encrypt","decrypt"]);
+  return {authKey: b64(bits.slice(0,32)), kek};
+}
+async function seal(key, bytes){            // -> iv(12) || ciphertext+tag
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const ct = new Uint8Array(await crypto.subtle.encrypt({name:"AES-GCM",iv}, key, bytes));
+  const out = new Uint8Array(12+ct.length); out.set(iv); out.set(ct,12); return out;
+}
+async function open_(key, bytes){
+  bytes = new Uint8Array(bytes);
+  return new Uint8Array(await crypto.subtle.decrypt({name:"AES-GCM",iv:bytes.slice(0,12)}, key, bytes.slice(12)));
+}
+const sealJSON = async (key,obj)=> b64(await seal(key, enc.encode(JSON.stringify(obj))));
+const openJSON = async (key,s)=> JSON.parse(dec.decode(await open_(key, unb64(s))));
+
+/* ============================================================
+   STATE + API
+   ============================================================ */
+let S = {token:null, key:null, name:"", email:"", items:[], cat:"all"};
+async function api(path, opts={}){
+  const h = {...(opts.headers||{})};
+  if(S.token) h.Authorization = "Bearer "+S.token;
+  if(opts.json){ h["Content-Type"]="application/json"; opts.body=JSON.stringify(opts.json); }
+  const r = await fetch(path,{method:opts.method||"GET",headers:h,body:opts.body});
+  if(!r.ok){
+    if(r.status===401 && S.token){ toast("Session expired. Please sign in again."); lock(); }
+    let m="Something went wrong"; try{const j=await r.json(); m=typeof j.detail==="string"?j.detail:m}catch{}
+    throw new Error(m);
+  }
+  return opts.raw ? r.arrayBuffer() : r.json();
+}
+const $ = id => document.getElementById(id);
+const esc = s => String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function toast(t){const e=$("toast");e.textContent=t;e.classList.remove("hide");clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.add("hide"),2800)}
+const fmtSize = n => n<1024? n+" B" : n<1048576? (n/1024).toFixed(0)+" KB" : (n/1048576).toFixed(1)+" MB";
+
+/* ============================================================
+   AUTH UI
+   ============================================================ */
+let mode="in";
+function setMode(m){
+  mode=m; const up=m==="up";
+  $("tabIn").classList.toggle("on",!up); $("tabUp").classList.toggle("on",up);
+  $("nameRow").classList.toggle("hide",!up); $("upExtra").classList.toggle("hide",!up);
+  $("authTitle").textContent = up?"Create your vault":"Welcome back";
+  $("authSub").textContent = up?"Your password will encrypt everything you store.":"Sign in to open your vault.";
+  $("authBtn").textContent = up?"Create vault":"Sign in";
+  $("pw").autocomplete = up?"new-password":"current-password";
+  $("authErr").textContent="";
+}
+$("tabIn").onclick=()=>setMode("in"); $("tabUp").onclick=()=>setMode("up");
+$("showpw").onclick=()=>{const p=$("pw");const s=p.type==="password";p.type=s?"text":"password";$("showpw").textContent=s?"Hide":"Show"};
+function strength(p){
+  let s=0; if(p.length>=12)s++; if(p.length>=16)s++; if(/[a-z]/.test(p)&&/[A-Z]/.test(p))s++; if(/\d/.test(p))s++; if(/[^A-Za-z0-9]/.test(p))s++;
+  return Math.min(s,4);
+}
+$("pw").addEventListener("input",()=>{
+  const s=strength($("pw").value), bar=$("meterbar");
+  bar.style.width=(s*25)+"%"; bar.style.background=["#b3372d","#b3372d","#d58a16","#6a9f3a","#2f7d4f"][s];
+  $("meterTxt").textContent=["Too weak","Weak","Okay","Good","Strong"][s]+($("pw").value.length<12?" · need 12+ characters":"");
+});
+
+$("authForm").addEventListener("submit", async e=>{
+  e.preventDefault();
+  const email=$("email").value.trim().toLowerCase(), pw=$("pw").value, err=$("authErr"), btn=$("authBtn");
+  err.textContent=""; btn.disabled=true; const label=btn.textContent; btn.textContent="Working…";
+  try{
+    if(!window.isSecureContext) throw new Error("Open this app on https:// or http://localhost so encryption is available.");
+    if(mode==="up"){
+      if(!$("name").value.trim()) throw new Error("Please enter your name");
+      if(pw.length<12) throw new Error("Password must be at least 12 characters");
+      if(strength(pw)<2) throw new Error("Please choose a stronger password");
+      if(pw!==$("pw2").value) throw new Error("Passwords do not match");
+      const salt=b64(crypto.getRandomValues(new Uint8Array(16)));
+      const {authKey,kek}=await deriveKeys(pw,salt,600000);
+      const raw=crypto.getRandomValues(new Uint8Array(32));               // random AES-256 master key
+      const wrapped=b64(await seal(kek,raw));
+      await api("/api/register",{method:"POST",json:{email,name:$("name").value.trim(),kdf_salt:salt,auth_key:authKey,wrapped_key:wrapped}});
+      toast("Vault created. Signing you in…");
+    }
+    const {kdf_salt,kdf_iters}=await api("/api/salt?email="+encodeURIComponent(email));
+    const {authKey,kek}=await deriveKeys(pw,kdf_salt,kdf_iters);
+    const res=await api("/api/login",{method:"POST",json:{email,auth_key:authKey}});
+    let raw; try{ raw=await open_(kek,unb64(res.wrapped_key)); }catch{ throw new Error("Could not unlock vault key"); }
+    S.key=await crypto.subtle.importKey("raw",raw,"AES-GCM",false,["encrypt","decrypt"]); // non-extractable, memory only
+    raw.fill(0);
+    S.token=res.token; S.name=res.name; S.email=email;
+    $("pw").value=$("pw2").value="";
+    await enterApp();
+  }catch(ex){ err.textContent=ex.message; }
+  finally{ btn.disabled=false; btn.textContent=label; }
+});
+
+function lock(){
+  if(S.token) fetch("/api/logout",{method:"POST",headers:{Authorization:"Bearer "+S.token}}).catch(()=>{});
+  S={token:null,key:null,name:"",email:"",items:[],cat:"all"};
+  $("app").classList.add("hide"); $("auth").classList.remove("hide"); $("modalHost").innerHTML=""; setMode("in");
+}
+$("logout").onclick=lock;
+let idle; const bump=()=>{clearTimeout(idle); if(S.token) idle=setTimeout(()=>{toast("Locked after 15 minutes of inactivity");lock()},15*60*1000)};
+["click","keydown","mousemove"].forEach(ev=>addEventListener(ev,bump,{passive:true}));
+
+/* ============================================================
+   VAULT UI
+   ============================================================ */
+async function enterApp(){
+  $("auth").classList.add("hide"); $("app").classList.remove("hide");
+  $("whoName").textContent=S.name; $("whoMail").textContent=S.email; bump();
+  await load();
+}
+async function load(){
+  const rows=await api("/api/items"); const out=[];
+  for(const r of rows){
+    try{ const d=await openJSON(S.key,r.blob); out.push({id:r.id,blob:r.blob,updated:r.updated,...d}); }
+    catch{ out.push({id:r.id,blob:r.blob,updated:r.updated,cat:"other",title:"⚠ Could not decrypt",fields:{},files:[],broken:true}); }
+  }
+  S.items=out; render();
+}
+function render(){
+  const nav=$("nav"); nav.innerHTML="";
+  const mk=(k,l,n)=>{const b=document.createElement("button");b.className="nav"+(S.cat===k?" on":"");b.innerHTML=`<span>${l}</span>`+(n!=null?`<span class="n">${n}</span>`:"");b.onclick=()=>{S.cat=k;render()};nav.appendChild(b)};
+  mk("all","Overview",S.items.length);
+  for(const [k,c] of Object.entries(CATS)) mk(k,`${c.icon}&nbsp; ${c.label}`,S.items.filter(i=>i.cat===k).length);
+  mk("activity","🕘&nbsp; Activity log");
+  const v=$("view");
+  $("addBtn").classList.toggle("hide",S.cat==="activity");
+  if(S.cat==="activity"){ $("viewTitle").textContent="Activity log"; return renderActivity(v); }
+  $("viewTitle").textContent = S.cat==="all"?"Your vault":CATS[S.cat].label;
+  const list=S.items.filter(i=>S.cat==="all"||i.cat===S.cat);
+  let html="";
+  if(S.cat==="all"){
+    const files=S.items.reduce((a,i)=>a+(i.files?.length||0),0);
+    html+=`<div class="stats"><div class="stat"><b>${S.items.length}</b><span>records</span></div><div class="stat"><b>${files}</b><span>encrypted files</span></div><div class="stat"><b>${new Set(S.items.map(i=>i.fields?.["Trusted contact who may claim this"]).filter(Boolean)).size}</b><span>trusted contacts</span></div></div>`;
+  }
+  if(!list.length){
+    html+=`<div class="empty"><h3>${S.cat==="all"?"Your vault is empty":"Nothing here yet"}</h3><p>Add the first record and upload any supporting papers. They are encrypted before they leave this page.</p></div>`;
+    v.innerHTML=html; return;
+  }
+  html+='<div class="grid" id="grid"></div>'; v.innerHTML=html;
+  const g=$("grid");
+  for(const it of list){
+    const b=document.createElement("button"); b.className="card";
+    const first=Object.entries(it.fields||{}).filter(([k,x])=>x&&k!=="Trusted contact who may claim this").slice(0,2);
+    b.innerHTML=`<div class="cat">${CATS[it.cat]?.icon||""} ${esc(CATS[it.cat]?.label||"")}</div><h3>${esc(it.title)}</h3>`+
+      first.map(([k,x])=>`<div class="meta">${esc(k)}: ${esc(x)}</div>`).join("")+
+      `<div class="chips">${it.files?.length?`<span class="chip">📎 ${it.files.length} file${it.files.length>1?"s":""}</span>`:""}${it.fields?.["Trusted contact who may claim this"]?`<span class="chip">👤 ${esc(it.fields["Trusted contact who may claim this"])}</span>`:""}<span class="chip">🔒 encrypted</span></div>`;
+    b.onclick=()=>showItem(it); g.appendChild(b);
+  }
+}
+async function renderActivity(v){
+  v.innerHTML="<p>Loading…</p>";
+  const rows=await api("/api/activity");
+  v.innerHTML=`<p style="color:var(--ink2);margin-top:0">Every visit is recorded. If you see something you don't recognise, change your password and review your records.</p><table><tr><th>When</th><th>What</th><th>From</th></tr>${rows.map(r=>`<tr><td>${new Date(r.ts*1000).toLocaleString()}</td><td>${esc(r.action)}</td><td>${esc(r.ip)}</td></tr>`).join("")}</table>`;
+}
+
+/* ---------- modal helpers ---------- */
+function modal(inner){
+  const h=$("modalHost"); h.innerHTML=`<div class="modal"><div class="sheet" role="dialog" aria-modal="true">${inner}</div></div>`;
+  h.firstChild.addEventListener("mousedown",e=>{if(e.target===h.firstChild)closeModal()});
+  return h.querySelector(".sheet");
+}
+const closeModal=()=>{$("modalHost").innerHTML=""};
+addEventListener("keydown",e=>{if(e.key==="Escape")closeModal()});
+
+/* ---------- add / edit ---------- */
+$("addBtn").onclick=()=>editItem(null);
+function editItem(it){
+  const cat = it?.cat || (S.cat!=="all"&&S.cat!=="activity"?S.cat:"bank");
+  const staged = (it?.files||[]).map(f=>({...f,existing:true}));   // {id,name,type,size} or {file:File}
+  const sh=modal(`<h2>${it?"Edit record":"Add a record"}</h2><div style="color:var(--ink2)">Everything below is encrypted on this device before saving.</div>
+    <label for="f_cat">Category</label><select id="f_cat">${Object.entries(CATS).map(([k,c])=>`<option value="${k}" ${k===cat?"selected":""}>${c.icon} ${c.label}</option>`).join("")}</select>
+    <label for="f_title">Title</label><input id="f_title" placeholder="e.g. SBI savings account" value="${esc(it?.title||"")}">
+    <div class="two" id="dyn"></div>
+    <label>Documents</label>
+    <div class="drop" id="drop"><b>Drop files here</b> or click to choose<br><small>PDF, images, scans · up to 15 MB each · encrypted before upload</small></div>
+    <input type="file" id="picker" multiple class="hide">
+    <div class="files" id="flist"></div>
+    <div class="err" id="fErr" role="alert"></div>
+    <div class="row"><button class="btn ghost" id="cancel">Cancel</button><button class="btn" id="save">Encrypt &amp; save</button></div>`);
+  const values={...(it?.fields||{})};
+  const drawFields=()=>{
+    const c=CATS[$("f_cat").value]; $("dyn").innerHTML="";
+    [...c.fields,...COMMON].forEach(([label,type,opts])=>{
+      const d=document.createElement("div"); const id="x_"+label.replace(/\W/g,"_");
+      d.innerHTML=`<label for="${id}">${esc(label)}</label>`+(type==="select"
+        ?`<select id="${id}"><option value=""></option>${opts.map(o=>`<option>${esc(o)}</option>`).join("")}</select>`
+        :`<input id="${id}" type="${type}">`);
+      $("dyn").appendChild(d);
+      const el=d.querySelector("input,select"); el.value=values[label]||""; el.dataset.label=label;
+      el.addEventListener("input",()=>values[label]=el.value);
+    });
+  };
+  $("f_cat").onchange=drawFields; drawFields();
+  const drawFiles=()=>{
+    $("flist").innerHTML="";
+    staged.forEach((f,i)=>{
+      const n=f.file?f.file.name:f.name, sz=f.file?f.file.size:f.size;
+      const d=document.createElement("div"); d.className="file";
+      d.innerHTML=`<span>📄</span><span class="nm">${esc(n)}</span><small>${fmtSize(sz)}${f.file?" · will be encrypted":" · 🔒"}</small><button class="x" title="Remove">✕</button>`;
+      d.querySelector("button").onclick=()=>{staged.splice(i,1);drawFiles()}; $("flist").appendChild(d);
+    });
+  };
+  drawFiles();
+  const add=fl=>{for(const f of fl){ if(f.size>15*1024*1024){$("fErr").textContent=`${f.name} is larger than 15 MB`;continue} staged.push({file:f}) } drawFiles()};
+  const drop=$("drop"); drop.onclick=()=>$("picker").click(); $("picker").onchange=e=>{add(e.target.files);e.target.value=""};
+  ["dragover","dragenter"].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add("over")}));
+  ["dragleave","drop"].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove("over")}));
+  drop.addEventListener("drop",e=>add(e.dataTransfer.files));
+  $("cancel").onclick=closeModal;
+  $("save").onclick=async()=>{
+    const title=$("f_title").value.trim(); $("fErr").textContent="";
+    if(!title){$("fErr").textContent="Please give this record a title";return}
+    const btn=$("save"); btn.disabled=true; btn.textContent="Encrypting…";
+    const uploaded=[];
+    try{
+      const files=[];
+      for(const f of staged){
+        if(f.existing){ files.push({id:f.id,name:f.name,type:f.type,size:f.size}); continue; }
+        const bytes=new Uint8Array(await f.file.arrayBuffer());
+        const sealed=await seal(S.key,bytes);                      // file bytes encrypted here
+        const r=await api("/api/files",{method:"POST",body:sealed,headers:{"Content-Type":"application/octet-stream"}});
+        uploaded.push(r.id);
+        files.push({id:r.id,name:f.file.name,type:f.file.type||"application/octet-stream",size:f.file.size});
+      }
+      const catv=$("f_cat").value, allowed=new Set([...CATS[catv].fields,...COMMON].map(x=>x[0]));
+      const fields={}; for(const [k,x] of Object.entries(values)) if(x&&allowed.has(k)) fields[k]=x;
+      const blob=await sealJSON(S.key,{cat:catv,title,fields,files,v:1});  // details + file names encrypted
+      if(it){
+        await api("/api/items/"+it.id,{method:"PUT",json:{blob}});
+        const keep=new Set(files.map(f=>f.id));
+        for(const old of it.files||[]) if(!keep.has(old.id)) api("/api/files/"+old.id,{method:"DELETE"}).catch(()=>{});
+      } else await api("/api/items",{method:"POST",json:{blob}});
+      closeModal(); toast("Saved and encrypted"); await load();
+    }catch(ex){
+      for(const id of uploaded) api("/api/files/"+id,{method:"DELETE"}).catch(()=>{});
+      $("fErr").textContent=ex.message; btn.disabled=false; btn.textContent="Encrypt & save";
+    }
+  };
+}
+
+/* ---------- view ---------- */
+function showItem(it){
+  const kv=Object.entries(it.fields||{}).filter(([,v])=>v).map(([k,v])=>`<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("");
+  const sh=modal(`<div class="card" style="all:unset"><div class="cat" style="font-size:12px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--amber-d)">${CATS[it.cat]?.icon||""} ${esc(CATS[it.cat]?.label||"")}</div></div>
+    <h2>${esc(it.title)}</h2>
+    <dl class="kv">${kv||'<dt>Details</dt><dd style="color:var(--ink2)">None added</dd>'}</dl>
+    <label>Documents</label><div class="files" id="vfiles">${it.files?.length?"":'<small style="color:var(--ink2)">No documents attached</small>'}</div>
+    <div id="pv"></div>
+    <details style="margin-top:18px"><summary style="cursor:pointer;color:var(--ink2);font-size:13px">🔍 What the server actually stores for this record</summary>
+      <div class="cipher">${esc(it.blob.slice(0,420))}${it.blob.length>420?"…":""}</div>
+      <small style="color:var(--ink2)">${it.blob.length} characters of AES-256-GCM ciphertext. Without your password this is unreadable.</small></details>
+    <div class="row"><button class="btn danger" id="del">Delete</button><button class="btn ghost" id="edit">Edit</button><button class="btn" id="close">Close</button></div>`);
+  const vf=sh.querySelector("#vfiles");
+  (it.files||[]).forEach(f=>{
+    const d=document.createElement("div"); d.className="file";
+    const canPrev=/^image\//.test(f.type)||f.type==="application/pdf";
+    d.innerHTML=`<span>📄</span><span class="nm">${esc(f.name)}</span><small>${fmtSize(f.size)}</small>${canPrev?'<button data-a="p">View</button>':""}<button data-a="d">Download</button>`;
+    d.onclick=async e=>{
+      const a=e.target.dataset?.a; if(!a)return;
+      e.target.disabled=true; const t=e.target.textContent; e.target.textContent="Decrypting…";
+      try{
+        const buf=await api("/api/files/"+f.id,{raw:true});
+        const plain=await open_(S.key,buf);
+        const url=URL.createObjectURL(new Blob([plain],{type:f.type}));
+        if(a==="d"){const l=document.createElement("a");l.href=url;l.download=f.name;l.click();setTimeout(()=>URL.revokeObjectURL(url),4000)}
+        else $("pv").innerHTML=/^image\//.test(f.type)?`<img class="preview-img" src="${url}" alt="">`:`<iframe class="preview" src="${url}" title="Preview"></iframe>`;
+      }catch{ toast("Could not decrypt this file"); }
+      e.target.disabled=false; e.target.textContent=t;
+    };
+    vf.appendChild(d);
+  });
+  $("close").onclick=closeModal; $("edit").onclick=()=>editItem(it);
+  $("del").onclick=async()=>{
+    if(!confirm("Delete this record and its encrypted files? This cannot be undone.")) return;
+    await api(`/api/items/${it.id}?files=${(it.files||[]).map(f=>f.id).join(",")}`,{method:"DELETE"});
+    closeModal(); toast("Deleted"); load();
+  };
+}
+setMode("in");
+</script>
+</body>
+</html>
